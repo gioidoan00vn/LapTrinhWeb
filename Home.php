@@ -1,63 +1,61 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Title</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    <link rel="stylesheet" href="Style.css" />
-</head>
 <?php
-session_start();
+    require_once('header.php');
+    session_start();
+    if(!isset($_SESSION["ChucVu"])){
+    header('Location: ./Login.php', true, 301);}
 ?>
 <body>
 
-<nav class="navbar navbar-expand-md bg-light navbar-light">
-    <a class="navbar-brand" href="Home.php">Lớp học</a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
-        <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="collapsibleNavbar">
-        <ul class="navbar-nav ml-auto">
-
-            <?php
-                include "database.php";
-                $conn=ConnectDB();
-                if($_SESSION["ChucVu"]==="HocVien"){
-
-                }else if($_SESSION["ChucVu"]==="GiaoVien"){
-                    echo "<li class='nav-item'>";
-                    echo "<a class='nav-link' href='AddClass.php'>Tạo lớp học</a>";
-                    echo "</li>";
-                }else if($_SESSION["ChucVu"]==="Admin") {
-                    echo "<li class='nav-item'>";
-                    echo "<a class='nav-link' href='PhanQuyen.php'>Phân quyền</a>";
-                    echo "</li>";
-                    echo "<li class='nav-item'>";
-                    echo "<a class='nav-link' href='AddClass.php'>Tạo lớp học</a>";
-                    echo "</li>";
-                }
-            ?>
-
-            <li class="nav-item">
-                <a class="nav-link" href="#">Tham gia vào lớp học</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="Login.php">Đăng xuất</a>
-            </li>
-            <li class="nav-item">
-                <p class="navbar-brand" > <?php echo $_SESSION["username"] ?></p>
-            </li>
-        </ul>
-    </div>
-</nav>
+<?php
+    require_once("mainMenu.php");
+    function clickclasses($a,$giaovien) {
+        $_SESSION['class-clicked'] = $a;
+        $_SESSION['tengiaovien']= $giaovien;
+    }
+    
+?>
 
 <div class="container">
     <div class="row">
-        <div class="col-lg-4 col-md-6 col-sm-6 mt-3 mb-3">
+        
+        <?php 
+            $user = $_SESSION['username'];
+            $sql="Select MaLopHoc from enrollment where username = '$user'";
+            $result = $conn->query($sql);
+            if ($result->num_rows > 0) {
+                // output data of each row
+                while($row = $result->fetch_assoc()) {
+                        $maLop = $row['MaLopHoc'];
+                        $sql="Select * from lophoc where MaLopHoc = '$maLop'";
+                        $result2 = $conn->query($sql);
+                        while($row2 = $result2->fetch_assoc()) {
+                            $monhoc = $row2['MonHoc'];
+                            $giaovien = $row2['Creater'];
+                            $sql = "Select * from user where username = '$giaovien'";
+                            $result3 = $conn->query($sql);      
+                            while($row3 = $result3->fetch_assoc()) {
+                                $giaovien = $row3['HoTen'];
+                            }
+                            echo "<div  class='card-monhoc col-lg-4 col-md-6 col-sm-6 mt-3 mb-3'>";
+        ?>
+                                    <a onclick='<?= clickclasses($maLop,$giaovien)?>' href='Stream_Class.php' style='color: black'>
+        <?php
+                                        echo "<div class='card'>
+                                            <div class='card-body'>
+                                                <h4 class='card-title'>$monhoc</h4>
+                                                <p class='card-text'>$giaovien</p>
+                                            </div>
+                                            <div class='image'></div>
+                                        </div>
+                                    </a>
+                                </div>";
+        
+                        }
+                }
+            }
+        ?>
+        
+        <!-- <div class="col-lg-4 col-md-6 col-sm-6 mt-3 mb-3">
             <a href="Stream_Class.php" style="color: black">
                 <div class="card">
                         <div class="card-body">
@@ -68,39 +66,8 @@ session_start();
                 </div>
             </a>
         </div>
-        <div class="col-lg-4 col-md-6 col-sm-6 mt-3 mb-3">
-            <a href="Stream_Class.php" style="color: black">
-                <div class="card">
-                    <div class="card-body">
-                        <h4 class="card-title">Tên môn học</h4>
-                        <p class="card-text">Tên giáo viên</p>
-                    </div>
-                    <div class="image"></div>
-                </div>
-            </a>
-        </div>
-        <div class="col-lg-4 col-md-6 col-sm-6 mt-3 mb-3">
-            <a href="Stream_Class.php" style="color: black">
-                <div class="card">
-                    <div class="card-body">
-                        <h4 class="card-title">Tên môn học</h4>
-                        <p class="card-text">Tên giáo viên</p>
-                    </div>
-                    <div class="image"></div>
-                </div>
-            </a>
-        </div>
-        <div class="col-lg-4 col-md-6 col-sm-6 mt-3 mb-3">
-            <a href="Stream_Class.php" style="color: black">
-                <div class="card">
-                    <div class="card-body">
-                        <h4 class="card-title">Tên môn học</h4>
-                        <p class="card-text">Tên giáo viên</p>
-                    </div>
-                    <div class="image"></div>
-                </div>
-            </a>
-        </div>
+        -->
+        
     </div>
 </div>
 </body>

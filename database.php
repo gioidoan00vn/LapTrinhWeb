@@ -5,7 +5,7 @@ use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\SMTP;
 use PHPMailer\PHPMailer\Exception;
 // Load Composer's autoloader
-require 'C:/xampp/htdocs/DoAn/vendor/autoload.php';
+require './vendor/autoload.php';
 $servername = "localhost";
 $username = "root";
 $password = "";

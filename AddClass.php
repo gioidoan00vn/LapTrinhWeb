@@ -1,25 +1,18 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    <script src="main.js"></script>
-</head>
 <?php
+    session_start();
+    require_once('header.php');
     $error = '';
     $lop = '';
     $mon = '';
     $phong = '';
+    $user = $_SESSION['username'];
     if (isset($_POST['lop']) && isset($_POST['mon']) && isset($_POST['phong']))
     {
         $lop = $_POST['lop'];
         $mon = $_POST['mon'];
         $phong = $_POST['phong'];
-
+        
+        
 
         if (empty($lop)) {
             $error = 'Hãy nhập tên lớp học';
@@ -30,20 +23,23 @@
         else if (empty($phong)) {
             $error = 'Hãy nhập tên phòng học';
         }
-        else if ($_FILES['image']['error'] != UPLOAD_ERR_OK) {
-            $error = 'Vui lòng upload ảnh đại diện';
-        }
         else {
             include "database.php";
             $conn = ConnectDB();
-            $img = $_FILES['image']['lop'];
-            $sql = "INSERT INTO lophoc (TenLopHoc, MonHoc, PhongHoc, AnhDaiDien, MaLopHoc)
-                VALUES ('$lop', '$mon', '$phong', '$img', 'rand(1000,10000)')";
+            $sql = "INSERT INTO lophoc (TenLopHoc, MonHoc, PhongHoc,Creater)
+                VALUES ('$lop', '$mon', '$phong', '$user')";
             if (mysqli_query($conn, $sql)) {
-                echo "New record created successfully";
+                $last_id = $conn->insert_id;
+                $sql = "INSERT INTO enrollment (username, MaLopHoc)
+                VALUES ('$user', '$last_id')";
+                mysqli_query($conn, $sql);
+                echo "<script type='text/javascript'>alert('Thêm lớp thành công');</script>";
+                
             } else {
                 echo "Error: " . $sql . "<br>" . mysqli_error($conn);
             }
+            
+            
         }
     }
 ?>
@@ -66,13 +62,6 @@
                 <div class="form-group">
                     <label for="id_phong">Phòng học</label>
                     <input required class="form-control" name="phong" type="text" placeholder="Phòng học" id="id_phong">
-                </div>
-                <div class="form-group">
-                    <label for="customFile">Ảnh đại diện</label>
-                    <div class="custom-file">
-                        <input name="image" type="file" class="custom-file-input" id="customFile" accept="image/gif, image/jpeg, image/png, image/bmp">
-                        <label onchange="nameImage()" class="custom-file-label" for="customFile">Ảnh đại diện</label>
-                    </div>
                 </div>
                 <div class="form-group">
                     <?php

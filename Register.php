@@ -1,15 +1,5 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    <link rel="stylesheet" href="Style.css" />
-</head>
 <?php
+    require_once('header.php');
     include "database.php";
     $conn=ConnectDB();
     $sql="Select Email from user";
@@ -56,7 +46,7 @@
                     if (mysqli_query($conn, $sql)) {
                         $success = "Đăng kí thành công";
                     } else {
-                        echo "Error:" . $sql . "<br>" . mysqli_error($conn);
+                        
                     }
                 }
             }
